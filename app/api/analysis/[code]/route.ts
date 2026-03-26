@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { calculateMA } from '@/lib/analysis/movingAverage'
+import { calculateVolatility } from '@/lib/analysis/volatility'
+import { calculateRiseProbability } from '@/lib/analysis/riseProbability'
+import { determineTrend } from '@/lib/analysis/trend'
+import { calculateCorrelation } from '@/lib/analysis/correlation'
 
 export async function GET(
   req: NextRequest,
@@ -19,10 +24,10 @@ export async function GET(
       return NextResponse.json({ error: '종목을 찾을 수 없습니다' }, { status: 404 })
     }
 
-    // 최근 60일 종가 데이터 조회
+    // 최근 60일 종가 조회 (과거 → 최신 오름차순)
     const { data: prices, error: priceError } = await supabaseAdmin
       .from('stock_prices')
-      .select('base_date, close_price, volume')
+      .select('base_date, close_price')
       .eq('stock_code', code)
       .order('base_date', { ascending: true })
       .limit(60)
@@ -37,23 +42,55 @@ export async function GET(
         ma: null,
         volatility: null,
         riseProbability: null,
-        trend: null,
+        trend: '판단 불가',
         similarStocks: [],
       })
     }
 
     const closePrices = prices.map((p) => p.close_price as number)
 
-    // 분석 함수 import (Task 04에서 구현)
-    const { calculateMA } = await import('@/lib/analysis/movingAverage')
-    const { calculateVolatility } = await import('@/lib/analysis/volatility')
-    const { calculateRiseProbability } = await import('@/lib/analysis/riseProbability')
-    const { determineTrend } = await import('@/lib/analysis/trend')
-
+    // 분석 지표 계산
     const ma = calculateMA(closePrices)
     const volatility = calculateVolatility(closePrices)
     const riseProbability = calculateRiseProbability(closePrices)
     const trend = determineTrend(ma)
+
+    // 비슷한 종목 계산 (같은 날짜 범위의 TOP 거래량 종목 대상)
+    const startDate = prices[0].base_date
+    const endDate = prices[prices.length - 1].base_date
+
+    const { data: candidates } = await supabaseAdmin
+      .from('stock_prices')
+      .select('stock_code, close_price, base_date, stocks!inner(name)')
+      .neq('stock_code', code)
+      .gte('base_date', startDate)
+      .lte('base_date', endDate)
+      .order('volume', { ascending: false })
+      .limit(300)
+
+    // 후보 종목별 종가 배열 구성
+    const candidateMap = new Map<string, { name: string; prices: number[] }>()
+    for (const row of candidates ?? []) {
+      const c = row as any
+      if (!candidateMap.has(c.stock_code)) {
+        candidateMap.set(c.stock_code, { name: c.stocks?.name ?? '', prices: [] })
+      }
+      candidateMap.get(c.stock_code)!.prices.push(c.close_price)
+    }
+
+    // 상관계수 계산 후 TOP 3 추출
+    const similarStocks: { code: string; name: string; correlation: number }[] = []
+    for (const [candCode, { name, prices: candPrices }] of candidateMap.entries()) {
+      if (candPrices.length < 5) continue
+      // 길이 맞추기 (짧은 쪽 기준)
+      const len = Math.min(closePrices.length, candPrices.length)
+      const r = calculateCorrelation(closePrices.slice(-len), candPrices.slice(-len))
+      if (r !== null && r > 0.7) {
+        similarStocks.push({ code: candCode, name, correlation: r })
+      }
+    }
+
+    similarStocks.sort((a, b) => b.correlation - a.correlation)
 
     return NextResponse.json({
       code: stock.code,
@@ -62,7 +99,7 @@ export async function GET(
       volatility,
       riseProbability,
       trend,
-      similarStocks: [], // Task 04 완성 후 구현
+      similarStocks: similarStocks.slice(0, 3),
     })
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 })
