@@ -1,5 +1,7 @@
 # Stock Insight
 
+[![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-black?logo=anthropic)](https://claude.ai/code)
+
 > 어제 데이터를 기반으로 오늘을 공부하는 주식 분석 서비스
 
 공공데이터(금융위원회 주식시세 API)를 활용한 주식 초보자 친화적 데이터 분석 서비스입니다.
@@ -83,3 +85,7 @@ stock-insight/
 ## 주의사항
 
 이 서비스에서 제공하는 분석 결과는 과거 데이터 기반의 수학적 계산값이며, **투자 권유가 아닌 정보 제공 목적**입니다.
+
+---
+
+🤖 Developed with [Claude Code](https://claude.ai/code)
