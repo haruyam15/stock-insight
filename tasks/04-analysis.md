@@ -1,5 +1,7 @@
 # Task 04: 분석 로직 구현
 
+## 상태: ✅ 완료
+
 ## 목표
 
 주식 데이터를 분석하는 순수 함수들을 구현한다. 이 함수들은 API Route에서 호출된다.
@@ -98,12 +100,12 @@ export function calculateCorrelation(pricesA: number[], pricesB: number[]): numb
 
 ## 완료 기준
 
-- [ ] `movingAverage.ts` 구현 및 MA5/MA20/MA60 계산 확인
-- [ ] `volatility.ts` 구현 및 등급 분류 확인
-- [ ] `riseProbability.ts` 구현 및 확률 계산 확인
-- [ ] `trend.ts` 구현 및 추세 판단 확인
-- [ ] `correlation.ts` 구현 및 상관계수 계산 확인
-- [ ] `/api/analysis/[code]` 호출 시 모든 지표가 포함된 응답 확인
+- [x] `movingAverage.ts` 구현 및 MA5/MA20/MA60 계산 확인
+- [x] `volatility.ts` 구현 및 등급 분류 확인
+- [x] `riseProbability.ts` 구현 및 확률 계산 확인
+- [x] `trend.ts` 구현 및 추세 판단 확인
+- [x] `correlation.ts` 구현 및 상관계수 계산 확인
+- [x] `/api/analysis/[code]` 호출 시 모든 지표가 포함된 응답 확인
 
 ## 다음 단계
 

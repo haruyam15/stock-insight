@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "fetch": "tsx scripts/fetch-stocks.ts"
+    "fetch": "tsx scripts/fetch-stocks.ts",
+    "fetch:bulk": "tsx scripts/fetch-stocks-bulk.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

@@ -12,6 +12,30 @@ const BASE_URL =
   'https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo'
 const API_KEY = process.env.PUBLIC_DATA_API_KEY!
 
+interface ApiItem {
+  basDt: string
+  srtnCd: string
+  itmsNm: string
+  mkp: string
+  clpr: string
+  hipr: string
+  lopr: string
+  trqu: string
+  trPrc: string
+  fltRt: string
+  vs: string
+}
+
+interface ApiResponse {
+  response?: {
+    body?: {
+      items?: {
+        item?: ApiItem | ApiItem[]
+      }
+    }
+  }
+}
+
 // 날짜를 YYYYMMDD 형식으로 변환
 function formatDate(date: Date): string {
   const y = date.getFullYear()
@@ -40,7 +64,7 @@ function toNumber(val: string): number | null {
 }
 
 // 공공 API 한 페이지 호출
-async function fetchPage(basDt: string, pageNo: number): Promise<any[]> {
+async function fetchPage(basDt: string, pageNo: number): Promise<ApiItem[]> {
   const params = new URLSearchParams({
     serviceKey: API_KEY,
     numOfRows: '1000',
@@ -54,16 +78,16 @@ async function fetchPage(basDt: string, pageNo: number): Promise<any[]> {
 
   if (!res.ok) throw new Error(`API 호출 실패: ${res.status}`)
 
-  const json = await res.json()
-  const items = json?.response?.body?.items?.item
+  const json = await res.json() as ApiResponse
+  const item = json?.response?.body?.items?.item
 
-  if (!items) return []
-  return Array.isArray(items) ? items : [items]
+  if (!item) return []
+  return Array.isArray(item) ? item : [item]
 }
 
 // 전체 데이터 수집 (페이징)
-async function fetchAllStocks(basDt: string): Promise<any[]> {
-  const all: any[] = []
+async function fetchAllStocks(basDt: string): Promise<ApiItem[]> {
+  const all: ApiItem[] = []
   let pageNo = 1
 
   console.log(`공공 API 호출 시작 (기준일자: ${basDt})`)
@@ -91,7 +115,7 @@ async function fetchAllStocks(basDt: string): Promise<any[]> {
 }
 
 // Supabase에 저장
-async function saveToDatabase(records: any[]): Promise<void> {
+async function saveToDatabase(records: ApiItem[]): Promise<void> {
   if (records.length === 0) {
     console.log('저장할 데이터가 없습니다.')
     return
@@ -159,7 +183,7 @@ async function main() {
   console.log(`\n✅ 완료`)
 }
 
-main().catch((e) => {
-  console.error('❌ 오류:', e.message)
+main().catch((e: unknown) => {
+  console.error('❌ 오류:', e instanceof Error ? e.message : String(e))
   process.exit(1)
 })

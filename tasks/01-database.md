@@ -1,5 +1,7 @@
 # Task 01: 데이터베이스 스키마 설계
 
+## 상태: ✅ 완료
+
 ## 목표
 
 Supabase(PostgreSQL)에 Stock Insight 서비스에 필요한 테이블을 생성한다.
@@ -81,11 +83,11 @@ export const supabaseAdmin = createClient(
 
 ## 완료 기준
 
-- [ ] `src/lib/supabase.ts` 생성 완료
-- [ ] `stocks` 테이블 생성 완료
-- [ ] `stock_prices` 테이블 생성 완료
-- [ ] 인덱스 생성 완료
-- [ ] Supabase에서 테이블 확인 완료
+- [x] `lib/supabase.ts` 생성 완료 (경로 변경: src/ 없음)
+- [x] `stocks` 테이블 생성 완료
+- [x] `stock_prices` 테이블 생성 완료
+- [x] 인덱스 생성 완료
+- [x] Supabase에서 테이블 확인 완료
 
 ## 다음 단계
 

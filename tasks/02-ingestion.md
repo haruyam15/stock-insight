@@ -1,5 +1,7 @@
 # Task 02: 데이터 수집 스크립트
 
+## 상태: ✅ 완료
+
 ## 목표
 
 금융위원회 주식시세정보 공공 API에서 데이터를 가져와 Supabase에 저장하는 스크립트를 작성한다.
@@ -105,9 +107,9 @@ npx ts-node scripts/fetch-stocks.ts 20250325
 
 ## 완료 기준
 
-- [ ] `scripts/fetch-stocks.ts` 작성 완료
-- [ ] 스크립트 실행 후 `stock_prices` 테이블에 데이터 저장 확인
-- [ ] 같은 날짜로 재실행해도 중복 없이 정상 동작 확인
+- [x] `scripts/fetch-stocks-bulk.ts` 작성 완료 (기간 범위 수집 지원으로 확장)
+- [x] 스크립트 실행 후 `stock_prices` 테이블에 데이터 저장 확인
+- [x] 같은 날짜로 재실행해도 중복 없이 정상 동작 확인
 
 ## 다음 단계
 

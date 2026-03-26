@@ -4,6 +4,15 @@ import { getLatestDate, isValidDate, toIsoDate } from '@/lib/db'
 
 type RankingType = 'rise' | 'fall' | 'volume' | 'value'
 
+type RankingRow = {
+  stock_code: string
+  close_price: number | null
+  change_rate: number | null
+  volume: number | null
+  trading_value: number | null
+  stocks: { name: string }
+}
+
 const COLUMN_MAP: Record<RankingType, string> = {
   rise: 'change_rate',
   fall: 'change_rate',
@@ -45,7 +54,8 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error
 
-    const ranking = (data ?? []).map((row: any, i: number) => ({
+    const rows = (data ?? []) as unknown as RankingRow[]
+    const ranking = rows.map((row, i) => ({
       rank: i + 1,
       code: row.stock_code,
       name: row.stocks?.name ?? '',
@@ -56,7 +66,8 @@ export async function GET(req: NextRequest) {
     }))
 
     return NextResponse.json({ type, date: targetDate, ranking })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '서버 오류가 발생했습니다'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

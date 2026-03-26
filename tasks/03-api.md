@@ -1,5 +1,7 @@
 # Task 03: API Routes 구현
 
+## 상태: ✅ 완료
+
 ## 목표
 
 Next.js App Router 기반의 API Routes를 구현한다. Supabase에서 데이터를 조회하여 JSON으로 응답한다.
@@ -84,12 +86,12 @@ src/app/api/
 
 ## 완료 기준
 
-- [ ] `/api/stocks` 검색 동작 확인
-- [ ] `/api/stocks/[code]` 특정 종목 조회 확인
-- [ ] `/api/ranking?type=rise` 상승률 랭킹 확인
-- [ ] `/api/market` 시장 요약 확인
-- [ ] `/api/analysis/[code]` 분석 데이터 확인
-- [ ] 존재하지 않는 종목코드 요청 시 404 응답 확인
+- [x] `/api/stocks` 검색 동작 확인
+- [x] `/api/stocks/[code]` 특정 종목 조회 확인
+- [x] `/api/ranking?type=rise` 상승률 랭킹 확인
+- [x] `/api/market` 시장 요약 확인
+- [x] `/api/analysis/[code]` 분석 데이터 확인
+- [x] 존재하지 않는 종목코드 요청 시 404 응답 확인
 
 ## 다음 단계
 
