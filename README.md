@@ -2,6 +2,8 @@
 
 [![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-black?logo=anthropic)](https://claude.ai/code)
 
+**🔗 https://k-stock-insight.vercel.app/**
+
 > 어제 데이터를 기반으로 오늘을 공부하는 주식 분석 서비스
 
 공공데이터(금융위원회 주식시세 API)를 활용한 주식 초보자 친화적 데이터 분석 서비스입니다.
