@@ -18,47 +18,23 @@ export async function GET(req: NextRequest) {
       targetDate = await getLatestDate()
     }
 
-    // 검색어가 있으면 stocks 테이블에서 코드 목록 먼저 조회
-    let codeFilter: string[] | null = null
-    if (q) {
-      const { data: matched } = await supabaseAdmin
-        .from('stocks')
-        .select('code, name')
-        .or(`code.ilike.%${q}%,name.ilike.%${q}%`)
-        .limit(50)
-      codeFilter = (matched ?? []).map((s) => s.code)
-      if (codeFilter.length === 0) {
-        return NextResponse.json({ date: targetDate, stocks: [] })
-      }
-    }
-
-    // stock_prices 조회
-    let priceQuery = supabaseAdmin
+    let query = supabaseAdmin
       .from('stock_prices')
-      .select('stock_code, close_price, change_rate, volume')
+      .select('stock_code, close_price, change_rate, volume, stocks!inner(name)')
       .eq('base_date', targetDate)
       .order('volume', { ascending: false })
       .limit(50)
 
-    if (codeFilter) {
-      priceQuery = priceQuery.in('stock_code', codeFilter)
+    if (q) {
+      query = query.or(`stock_code.ilike.%${q}%,stocks.name.ilike.%${q}%`)
     }
 
-    const { data: prices, error } = await priceQuery
+    const { data, error } = await query
     if (error) throw error
 
-    // 종목명 매핑
-    const codes = (prices ?? []).map((p) => p.stock_code)
-    const { data: stockNames } = await supabaseAdmin
-      .from('stocks')
-      .select('code, name')
-      .in('code', codes)
-
-    const nameMap = Object.fromEntries((stockNames ?? []).map((s) => [s.code, s.name]))
-
-    const stocks = (prices ?? []).map((row) => ({
+    const stocks = (data ?? []).map((row: any) => ({
       code: row.stock_code,
-      name: nameMap[row.stock_code] ?? '',
+      name: row.stocks?.name ?? '',
       close: row.close_price,
       changeRate: row.change_rate,
       volume: row.volume,

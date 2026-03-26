@@ -38,21 +38,6 @@ scripts/      # 데이터 수집 스크립트
 - 모든 page.tsx에 `export const revalidate = 3600` 추가 (ISR)
 - `'use client'`는 차트, 탭, 검색창 컴포넌트에만 사용
 
-## Supabase 쿼리 규칙
-
-`stocks`와 `stock_prices` 테이블 간 외래키가 없다.
-Supabase 조인 문법(`!inner`) 사용 시 에러 발생하므로 반드시 쿼리를 분리한다.
-
-```typescript
-// ❌ 사용 금지
-supabase.from('stock_prices').select('*, stocks!inner(name)')
-
-// ✅ 쿼리 분리 후 JS에서 합치기
-const { data: prices } = await supabase.from('stock_prices').select(...)
-const { data: stocks } = await supabase.from('stocks').select('code, name').in('code', codes)
-const nameMap = Object.fromEntries(stocks.map(s => [s.code, s.name]))
-```
-
 ## 개발 순서
 
 1. DB 스키마 (완료)
@@ -65,18 +50,10 @@ const nameMap = Object.fromEntries(stocks.map(s => [s.code, s.name]))
 
 커밋은 작업 단위별로 나눠서 한다.
 
-| 타입 | 설명 |
-|------|------|
-| `feat` | 새 기능 추가 |
-| `fix` | 버그 수정 |
+| 타입       | 설명                     |
+| ---------- | ------------------------ |
+| `feat`     | 새 기능 추가             |
+| `fix`      | 버그 수정                |
 | `refactor` | 동작 변경 없는 코드 개선 |
-| `style` | UI/스타일 변경 |
-| `chore` | 설정, 의존성, 문서 등 |
-
-```
-타입: 한글로 짧게 설명
-
-- 변경된 파일 또는 주요 내용을 bullet로 나열
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
-```
+| `style`    | UI/스타일 변경           |
+| `chore`    | 설정, 의존성, 문서 등    |

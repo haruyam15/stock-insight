@@ -99,19 +99,13 @@ stock-insight/
 
 상세 스키마는 [tasks/01-database.md](../tasks/01-database.md) 참고.
 
-### 중요: 외래키 없음
-`stock_prices.stock_code` 와 `stocks.code` 사이에 외래키 제약이 없다.
-Supabase 조인 문법(`stocks!inner`)을 사용하면 "relationship not found" 에러 발생.
+### 외래키
+`stock_prices.stock_code` → `stocks.code` 외래키 설정 완료.
+Supabase 조인 문법(`stocks!inner`) 사용 가능.
 
-**따라서 모든 API Route에서 쿼리를 분리하여 작성한다:**
 ```typescript
-// ❌ 이렇게 하면 에러
+// 조인 사용 가능
 supabase.from('stock_prices').select('*, stocks!inner(name)')
-
-// ✅ 이렇게 두 번 쿼리 후 JS에서 합친다
-const { data: prices } = await supabase.from('stock_prices').select(...)
-const { data: stocks } = await supabase.from('stocks').select('code, name').in('code', codes)
-const nameMap = Object.fromEntries(stocks.map(s => [s.code, s.name]))
 ```
 
 ---

@@ -35,9 +35,9 @@ export async function GET(req: NextRequest) {
     const column = COLUMN_MAP[type]
     const ascending = type === 'fall'
 
-    const { data: prices, error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('stock_prices')
-      .select('stock_code, close_price, change_rate, volume, trading_value')
+      .select('stock_code, close_price, change_rate, volume, trading_value, stocks!inner(name)')
       .eq('base_date', targetDate)
       .not(column, 'is', null)
       .order(column, { ascending })
@@ -45,19 +45,10 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error
 
-    // 종목명 매핑
-    const codes = (prices ?? []).map((p) => p.stock_code)
-    const { data: stockNames } = await supabaseAdmin
-      .from('stocks')
-      .select('code, name')
-      .in('code', codes)
-
-    const nameMap = Object.fromEntries((stockNames ?? []).map((s) => [s.code, s.name]))
-
-    const ranking = (prices ?? []).map((row, i) => ({
+    const ranking = (data ?? []).map((row: any, i: number) => ({
       rank: i + 1,
       code: row.stock_code,
-      name: nameMap[row.stock_code] ?? '',
+      name: row.stocks?.name ?? '',
       close: row.close_price,
       changeRate: row.change_rate,
       volume: row.volume,
