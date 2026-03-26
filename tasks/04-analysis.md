@@ -13,8 +13,10 @@
 
 ## 구현할 파일 목록
 
+> 주의: `src/` 폴더 없음. 루트의 `lib/` 에 바로 생성한다.
+
 ```
-src/lib/analysis/
+lib/analysis/
 ├── movingAverage.ts     # 이동평균선
 ├── volatility.ts        # 변동성 (표준편차)
 ├── riseProbability.ts   # 상승 확률
