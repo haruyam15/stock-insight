@@ -54,7 +54,7 @@ export default async function RankingPage({
   const { data, error } = await query
 
   if (error) {
-    return <p className="text-center py-20 text-slate-400">데이터를 불러오지 못했습니다.</p>
+    return <p className="text-center py-20 text-slate-400 dark:text-slate-500">데이터를 불러오지 못했습니다.</p>
   }
 
   const rows = (data ?? []) as unknown as RankingRow[]
@@ -72,14 +72,14 @@ export default async function RankingPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">TOP 랭킹</h1>
-        <p className="text-slate-500 mt-1">{displayDate} 기준</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">TOP 랭킹</h1>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">{displayDate} 기준</p>
       </div>
 
       <RankingTabs current={rankingType} />
 
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-700 mb-4">{LABEL[rankingType]} 순위</h2>
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">{LABEL[rankingType]} 순위</h2>
         <RankingTable items={items} />
       </div>
     </div>

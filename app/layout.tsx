@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/Header'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -12,12 +13,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={geist.className}>
-      <body className="min-h-screen bg-slate-50">
-        <Header />
-        <main className="max-w-4xl mx-auto px-4 py-8">
-          {children}
-        </main>
+    <html lang="ko" className={geist.className} suppressHydrationWarning>
+      <body className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+        <ThemeProvider>
+          <Header />
+          <main className="max-w-4xl mx-auto px-4 py-8">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   )

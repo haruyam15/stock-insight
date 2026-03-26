@@ -105,15 +105,15 @@ export default async function StockDetailPage({
   return (
     <div className="space-y-6">
       {/* 기본 정보 */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-        <p className="text-xs text-slate-400 mb-1">{displayDate} 기준</p>
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{displayDate} 기준</p>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{stock.name}</h1>
-            <p className="text-sm text-slate-400 mt-1">{stock.code}</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{stock.name}</h1>
+            <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">{stock.code}</p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold text-slate-900 tabular-nums">{fmt(latest.close_price)}원</p>
+            <p className="text-3xl font-bold text-slate-900 dark:text-white tabular-nums">{fmt(latest.close_price)}원</p>
             <p className={`text-lg font-semibold mt-1 tabular-nums ${getRateColor(latest.change_rate ?? 0)}`}>
               {formatRate(latest.change_rate ?? 0)}
               {latest.change_amount != null && (
@@ -130,9 +130,9 @@ export default async function StockDetailPage({
             ['저가', latest.low_price],
             ['거래량', latest.volume],
           ].map(([label, val]) => (
-            <div key={label as string} className="bg-slate-50 rounded-lg p-3">
-              <p className="text-xs text-slate-500 mb-1">{label}</p>
-              <p className="text-sm font-semibold text-slate-900 tabular-nums">
+            <div key={label as string} className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">{label}</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">
                 {label === '거래량' ? fmt(val as number) : `${fmt(val as number)}원`}
               </p>
             </div>
@@ -140,9 +140,9 @@ export default async function StockDetailPage({
         </div>
 
         <div className="mt-3">
-          <div className="bg-slate-50 rounded-lg p-3">
-            <p className="text-xs text-slate-500 mb-1">거래대금</p>
-            <p className="text-sm font-semibold text-slate-900">{fmtValue(latest.trading_value)}</p>
+          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">거래대금</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-white">{fmtValue(latest.trading_value)}</p>
           </div>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default async function StockDetailPage({
 
       {/* 분석 지표 */}
       <div>
-        <h2 className="text-lg font-semibold text-slate-800 mb-4">분석 지표</h2>
+        <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">분석 지표</h2>
         <AnalysisCard
           currentPrice={latest.close_price as number}
           ma={ma}
@@ -165,21 +165,21 @@ export default async function StockDetailPage({
       {/* 비슷한 종목 */}
       {top3Similar.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">비슷한 종목</h2>
-          <div className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-100 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">비슷한 종목</h2>
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl divide-y divide-slate-100 dark:divide-slate-700 shadow-sm">
             {top3Similar.map((s) => (
               <Link
                 key={s.code}
                 href={`/stock/${s.code}`}
-                className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-slate-900">{s.name}</p>
-                  <p className="text-xs text-slate-400">{s.code}</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{s.name}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">{s.code}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-slate-500">상관계수</p>
-                  <p className="text-sm font-semibold text-slate-900 tabular-nums">{s.correlation.toFixed(2)}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">상관계수</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{s.correlation.toFixed(2)}</p>
                 </div>
               </Link>
             ))}

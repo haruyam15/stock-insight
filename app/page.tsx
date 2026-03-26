@@ -70,9 +70,21 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">시장 리포트</h1>
-        <p className="text-slate-500 mt-1">어제 데이터로 오늘을 공부해요</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">Daily Market</p>
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">시장 리포트</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 text-base">어제 데이터로 오늘을 공부해요</p>
+        </div>
+        <Link
+          href="/ranking"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 active:bg-indigo-800 transition-colors shadow-sm"
+        >
+          전체 랭킹
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </Link>
       </div>
 
       <MarketSummary
@@ -82,15 +94,6 @@ export default async function HomePage() {
         topFall={toTop(sorted.slice(-3).reverse())}
         topVolume={toTop([...data].sort((a, b) => (b.volume ?? 0) - (a.volume ?? 0)).slice(0, 3))}
       />
-
-      <div className="text-center">
-        <Link
-          href="/ranking"
-          className="inline-block px-6 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
-        >
-          전체 랭킹 보기 →
-        </Link>
-      </div>
     </div>
   )
 }

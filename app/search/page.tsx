@@ -22,7 +22,7 @@ export default async function SearchPage({
   if (!query) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">종목 검색</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">종목 검색</h1>
         <SearchEmptyState />
       </div>
     )
@@ -55,7 +55,7 @@ export default async function SearchPage({
   if (allCodes.length === 0) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
           &lsquo;{query}&rsquo; 검색 결과
         </h1>
         <SearchEmptyState query={query} />
@@ -74,10 +74,10 @@ export default async function SearchPage({
   if (error) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
           &lsquo;{query}&rsquo; 검색 결과
         </h1>
-        <p className="text-center py-20 text-slate-400">데이터를 불러오지 못했습니다.</p>
+        <p className="text-center py-20 text-slate-400 dark:text-slate-500">데이터를 불러오지 못했습니다.</p>
       </div>
     )
   }
@@ -90,7 +90,7 @@ export default async function SearchPage({
         <h1 className="text-2xl font-bold text-slate-900">
           &lsquo;{query}&rsquo; 검색 결과
         </h1>
-        <p className="text-slate-500 mt-1">{rows.length}건</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">{rows.length}건</p>
       </div>
 
       {rows.length === 0 ? (

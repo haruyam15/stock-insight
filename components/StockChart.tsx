@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { useTheme } from './ThemeProvider'
 
 interface HistoryItem {
   date: string
@@ -27,6 +28,9 @@ function computeMA(prices: number[], period: number): (number | null)[] {
 export function StockChart({ history }: { history: HistoryItem[] }) {
   const [showMA5, setShowMA5] = useState(true)
   const [showMA20, setShowMA20] = useState(true)
+  const { theme } = useTheme()
+
+  const isDark = theme === 'dark'
 
   const prices = history.map((h) => h.close)
   const ma5 = computeMA(prices, 5)
@@ -42,17 +46,24 @@ export function StockChart({ history }: { history: HistoryItem[] }) {
   const minPrice = Math.min(...prices) * 0.98
   const maxPrice = Math.max(...prices) * 1.02
 
+  const gridColor = isDark ? '#334155' : '#e2e8f0'
+  const tickColor = isDark ? '#64748b' : '#94a3b8'
+  const lineColor = isDark ? '#e2e8f0' : '#0f172a'
+  const tooltipBg = isDark ? '#1e293b' : '#ffffff'
+  const tooltipBorder = isDark ? '#334155' : '#e2e8f0'
+  const tooltipText = isDark ? '#f1f5f9' : '#0f172a'
+
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-slate-700">가격 차트 (최근 {history.length}일)</h3>
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">가격 차트 (최근 {history.length}일)</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setShowMA5(!showMA5)}
             className={`text-xs px-3 py-1 rounded-full border font-medium transition-colors ${
               showMA5
                 ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'border-slate-300 text-slate-500 hover:border-slate-400'
+                : 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500'
             }`}
           >
             MA5
@@ -62,7 +73,7 @@ export function StockChart({ history }: { history: HistoryItem[] }) {
             className={`text-xs px-3 py-1 rounded-full border font-medium transition-colors ${
               showMA20
                 ? 'bg-violet-500 border-violet-500 text-white'
-                : 'border-slate-300 text-slate-500 hover:border-slate-400'
+                : 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500'
             }`}
           >
             MA20
@@ -71,15 +82,15 @@ export function StockChart({ history }: { history: HistoryItem[] }) {
       </div>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 10, fill: '#94a3b8' }}
+            tick={{ fontSize: 10, fill: tickColor }}
             interval="preserveStartEnd"
           />
           <YAxis
             domain={[minPrice, maxPrice]}
-            tick={{ fontSize: 10, fill: '#94a3b8' }}
+            tick={{ fontSize: 10, fill: tickColor }}
             tickFormatter={(v) => v.toLocaleString('ko-KR')}
             width={60}
           />
@@ -88,13 +99,20 @@ export function StockChart({ history }: { history: HistoryItem[] }) {
               value != null ? `${Number(value).toLocaleString('ko-KR')}원` : '-',
               name,
             ]}
-            labelStyle={{ fontSize: 12, color: '#0f172a' }}
-            contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: '#e2e8f0', boxShadow: '0 1px 8px rgba(0,0,0,0.08)' }}
+            labelStyle={{ fontSize: 12, color: tooltipText }}
+            contentStyle={{
+              fontSize: 12,
+              borderRadius: 8,
+              borderColor: tooltipBorder,
+              backgroundColor: tooltipBg,
+              boxShadow: '0 1px 8px rgba(0,0,0,0.15)',
+              color: tooltipText,
+            }}
           />
           <Line
             type="monotone"
             dataKey="종가"
-            stroke="#0f172a"
+            stroke={lineColor}
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
@@ -122,9 +140,9 @@ export function StockChart({ history }: { history: HistoryItem[] }) {
         </LineChart>
       </ResponsiveContainer>
       {/* 범례 */}
-      <div className="flex gap-4 mt-2 justify-center text-xs text-slate-500">
+      <div className="flex gap-4 mt-2 justify-center text-xs text-slate-500 dark:text-slate-400">
         <span className="flex items-center gap-1">
-          <span className="inline-block w-4 h-0.5 bg-slate-900" />종가
+          <span className={`inline-block w-4 h-0.5 ${isDark ? 'bg-slate-200' : 'bg-slate-900'}`} />종가
         </span>
         {showMA5 && (
           <span className="flex items-center gap-1">
