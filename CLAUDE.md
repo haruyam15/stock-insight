@@ -1,31 +1,69 @@
-# Stock Insight Project
+# Stock Insight 프로젝트
 
-## Instructions
+## 시작 전 필독
 
-You must read all files in /docs before coding.
+코딩 시작 전에 반드시 `docs/` 폴더의 모든 파일을 읽는다.
+특히 `docs/architecture.md` 는 디렉토리 구조, 렌더링 전략, DB 쿼리 패턴 등 핵심 규칙을 담고 있다.
 
-Follow the architecture and feature specifications strictly.
+## 프로젝트 개요
 
-## Development Order
+공공데이터(금융위원회 주식시세 API) 기반 주식 분석 서비스.
+주식 초보자를 위한 데이터 시각화 및 수학 기반 분석 제공.
+실시간 기능 없음. 데이터는 T+1 (다음 영업일 오후 1시 이후 갱신).
 
-1. Database schema
-2. Data ingestion script
-3. API routes
-4. Analysis logic
-5. Frontend pages
+## 기술 스택
 
-## Rules
+- Next.js 14 (App Router), TypeScript, Tailwind CSS
+- Supabase (PostgreSQL)
+- Recharts (차트)
+- tsx (TypeScript 스크립트 실행)
 
-- Use TypeScript
-- Use Next.js App Router
-- Keep code modular
-- Separate logic and UI
+## 디렉토리 규칙
+
+`src/` 폴더를 사용하지 않는다. 모든 폴더는 프로젝트 루트에 위치한다.
+
+```
+app/          # Next.js 페이지 및 API Routes
+lib/          # 유틸리티, Supabase 클라이언트, 분석 로직
+components/   # React 컴포넌트
+scripts/      # 데이터 수집 스크립트
+```
+
+경로 별칭: `@/*` → 프로젝트 루트 (`./`)
+
+## 개발 규칙
+
+- 모든 코드는 TypeScript로 작성
+- 로직과 UI 분리: 분석 함수는 `lib/analysis/`, UI는 `components/`
+- 모든 page.tsx에 `export const revalidate = 3600` 추가 (ISR)
+- `'use client'`는 차트, 탭, 검색창 컴포넌트에만 사용
+
+## Supabase 쿼리 규칙
+
+`stocks`와 `stock_prices` 테이블 간 외래키가 없다.
+Supabase 조인 문법(`!inner`) 사용 시 에러 발생하므로 반드시 쿼리를 분리한다.
+
+```typescript
+// ❌ 사용 금지
+supabase.from('stock_prices').select('*, stocks!inner(name)')
+
+// ✅ 쿼리 분리 후 JS에서 합치기
+const { data: prices } = await supabase.from('stock_prices').select(...)
+const { data: stocks } = await supabase.from('stocks').select('code, name').in('code', codes)
+const nameMap = Object.fromEntries(stocks.map(s => [s.code, s.name]))
+```
+
+## 개발 순서
+
+1. DB 스키마 (완료)
+2. 데이터 수집 스크립트 (완료)
+3. API Routes (완료)
+4. 분석 로직
+5. 프론트엔드 페이지
 
 ## 커밋 규칙
 
 커밋은 작업 단위별로 나눠서 한다.
-
-### 타입
 
 | 타입 | 설명 |
 |------|------|
@@ -35,8 +73,6 @@ Follow the architecture and feature specifications strictly.
 | `style` | UI/스타일 변경 |
 | `chore` | 설정, 의존성, 문서 등 |
 
-### 형식
-
 ```
 타입: 한글로 짧게 설명
 
@@ -44,14 +80,3 @@ Follow the architecture and feature specifications strictly.
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
-
-## Important
-
-This project uses T+1 stock data.
-
-Do NOT implement real-time features.
-
-Focus on:
-
-- data analysis
-- beginner-friendly explanations
